@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+    <style>
+        /* Custom CSS styles */
+        body {
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        form {
+            margin: 0;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .save-button {
+            margin-top: 20px;
+        }
+
+        .btn-container {
+            margin-top: 20px;
+        }
+
+        .btn-container a {
+            margin-right: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="mt-5">Profile Details</h1>
+        {% if messages %}
+            <div class="messages mb-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ profile.user.username }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ profile.user.email }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ profile.user.first_name }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ profile.user.last_name }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="mobile_number">Mobile Number:</label>
+                <input type="text" class="form-control" id="mobile_number" name="mobile_number" value="{{ profile.mobile_number }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea class="form-control" id="address" name="address" readonly>{{ profile.address }}</textarea>
+            </div>
+
+            <a href="{% url 'editprofile' %}" class="btn btn-primary save-button">Edit Profile</a>
+        </form>
+
+        <!-- Button to view ordered products -->
+        <div class="btn-container">
+            <a href="{% url 'ordered_products' %}" class="btn btn-info">View Ordered Products</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

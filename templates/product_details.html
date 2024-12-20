@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ product.name }} Details
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row product-detail-container">
+    <!-- Product Image -->
+    <div class="col-md-6">
+      <div class="product-image-wrapper">
+        <img src="{{ product.proimage }}" alt="{{ product.name }}" class="product-image" onerror="this.src='/static/default-image.jpg';">
+      </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-md-6">
+      <h1 class="product-title">{{ product.name }}</h1>
+      <p class="category"><strong>Category:</strong> {{ product.get_category_display }}</p>
+      <p class="price">Rs.{{ product.price }}/kg</p>
+      <p class="description"><strong>Description:</strong></p>
+      <p>{{ product.description }}</p>
+
+      <!-- Add to Cart Button -->
+      <form method="post" action="{% url 'add_to_cart' product.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Add to Cart</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* General Container Styling */
+  .product-detail-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+
+  /* Product Image Styling */
+  .product-image-wrapper {
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+
+  .product-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  /* Product Title Styling */
+  .product-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  /* Category Styling */
+  .category {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  /* Price Styling */
+  .price {
+    font-size: 28px;
+    font-weight: 600;
+    color: #28a745;
+    margin-bottom: 20px;
+  }
+
+  /* Description Styling */
+  .description {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  /* Add to Cart Button Styling */
+  .btn-block {
+    display: block;
+    width: 100%;
+  }
+
+  .btn-lg {
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-primary:active {
+    background-color: #004494;
+  }
+
+  @media (max-width: 768px) {
+    .product-detail-container {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .product-image-wrapper {
+      margin-bottom: 20px;
+    }
+
+    .product-title {
+      text-align: center;
+    }
+  }
+</style>
+{% endblock %}

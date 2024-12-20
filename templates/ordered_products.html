@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Your Ordered Products</h1>
+
+        {% if orders %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Weight (in kg)</th>
+                        <th>Order Date</th>
+                        <th>Price/kg</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.product.name }}</td>
+                            <td>{{ order.quantity }}</td>
+                            <td>{{ order.order_date }}</td>
+                            <td>Rs. {{ order.product.price|floatformat:2 }}</td>
+                            <td id="total-price-{{ order.id }}">Rs. </td> <!-- Placeholder for total price -->
+                            <td>
+                                {% if order.is_paid %}
+                                    Paid
+                                {% else %}
+                                    Pending
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not order.is_paid %}
+                                    <form action="{% url 'pay_for_order' order.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary">Pay Now</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- JavaScript to calculate total prices -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    {% for order in orders %}
+                        var price = {{ order.product.price|floatformat:2 }};
+                        var quantity = {{ order.quantity }};
+                        var totalPrice = price * quantity;
+                        document.getElementById("total-price-{{ order.id }}").textContent = 'Rs. ' + totalPrice.toFixed(2);
+                    {% endfor %}
+                });
+            </script>
+
+        {% else %}
+            <p>No orders found.</p>
+        {% endif %}
+    </div>
+{% endblock %}

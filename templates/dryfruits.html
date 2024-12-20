@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="album py-5 bg-light">
+    <div class="container">
+      <!-- Search Form -->
+      <form method="get" action="{% url 'dry_fruits' %}" class="mb-4">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search by product name" value="{{ request.GET.q }}">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">Search</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="row">
+        {% if products %}
+          {% for product in products %}
+            <div class="col-md-4">
+              <!-- Make the entire card clickable -->
+              <a href="{% url 'product_detail' product.id product.name|slugify %}" class="card-link">
+                <div class="card mb-4 shadow-sm">
+                  <img
+                    src="{{ product.proimage|safe }}"
+                    class="bd-placeholder-img card-img-top"
+                    width="100%"
+                    height="225"
+                    alt="{{ product.name }}"
+                    onerror="this.src='/static/default-image.jpg';"
+                  />
+                  <div class="card-body">
+                    <h2>{{ product.name }}</h2>
+                    <p class="description">{{ product.description }}</p>  <!-- Display product description -->
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="btn-group">
+                        {% if product.quantity > 0 %}
+                          <!-- Add to Cart Button inside a form -->
+                          <form method="post" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-secondary add-to-cart" onclick="event.stopPropagation();">Add to cart</button>
+                          </form>
+                        {% else %}
+                          <!-- Out of Stock message -->
+                          <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Out of Stock</button>
+                        {% endif %}
+                      </div>
+                      <small class="text-muted">Rs.{{ product.price }}/kg</small>
+                    </div>
+                  </div>
+                </div>
+              </a> <!-- End of clickable card -->
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No products available in this category.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Make sure the card-link covers the whole card */
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  /* Add a hover effect */
+  .card-link:hover .card {
+    transform: translateY(-5px);
+    transition: transform 0.2s;
+  }
+
+  /* Truncate long descriptions */
+  .description {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Truncate long product names after one line and add ellipsis */
+  h2 {
+    font-size: 1.25rem;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
+{% endblock %}
+

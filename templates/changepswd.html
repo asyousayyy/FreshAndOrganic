@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+    <style>
+        /* Specific styles for the password change page */
+        .password-change-page {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .password-change-page h1 {
+            text-align: center;
+        }
+
+        .password-change-page form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .password-change-page label {
+            margin-top: 10px;
+        }
+
+        .password-change-page input[type="password"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .password-change-page input[type="submit"] {
+            margin-top: 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .password-change-page input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="password-change-page">
+        <h1>Change Your Password</h1>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <label for="old_password">Old Password:</label>
+            <input type="password" id="old_password" name="old_password" required>
+
+            <label for="new_password1">New Password:</label>
+            <input type="password" id="new_password1" name="new_password1" required>
+
+            <label for="new_password2">Confirm New Password:</label>
+            <input type="password" id="new_password2" name="new_password2" required>
+
+            <input type="submit" value="Change Password">
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

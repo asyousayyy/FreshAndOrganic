@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+    }
+
+    .actions button {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .actions button.increase,
+    .actions button.decrease {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .actions button.increase:hover,
+    .actions button.decrease:hover {
+        background-color: #0056b3;
+    }
+
+    .actions button.remove {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .actions button.remove:hover {
+        background-color: #c82333;
+    }
+
+    .actions button:active {
+        transform: translateY(1px);
+    }
+
+    .quantity form {
+        display: flex;
+        align-items: center;
+    }
+
+    .quantity input {
+        width: 60px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin: 0 5px;
+    }
+
+    .checkout-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .checkout-button button {
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .checkout-button button:hover {
+        background-color: #218838;
+    }
+
+    #total-section {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    #total-section p {
+        font-size: 18px;
+        margin: 5px 0;
+    }
+
+    #total-section span {
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        table {
+            font-size: 14px;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+        }
+
+        .checkout-button button {
+            font-size: 16px;
+            padding: 8px 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<h1>Shopping Cart</h1>
+{% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Image</th>
+            <th>Price/kg</th>
+            <th>Weight (in Kg)</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td><img src="{{ item.product.proimage }}" alt="Product Image" class="product-image"></td>
+            <td class="price">Rs.{{ item.product.price }}</td>
+            <td class="quantity">
+                <form method="post" action="{% url 'update_quantity' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="decrease">-</button>
+                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                    <button type="submit" name="action" value="increase">+</button>
+                </form>
+            </td>
+            <td class="subtotal">Rs.{{ item.subtotal }}</td>
+            <td class="actions"><a href="{% url 'remove_from_cart' item.id %}">Remove</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div id="total-section">
+    <p>Subtotal: <span id="subtotal">Rs.{{ subtotal }}</span></p>
+    <p>For Cash on Delivery: <span id="shipping">Rs.{{ shipping }}</span></p>
+    <p>Total: <span id="total">Rs.{{ total }}</span></p>
+</div>
+
+<!-- Checkout Form -->
+<div class="checkout-button">
+    <form method="post" action="{% url 'checkout' %}">
+        {% csrf_token %}
+
+        <!-- Add COD option -->
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="cod" name="cod">
+            <label class="form-check-label" for="cod">
+                Cash on Delivery
+            </label>
+        </div>
+
+        <button type="submit">Checkout</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('cart-page')?.addEventListener('click', function() {
+        alert('Please login to see your cart items');
+    });
+</script>
+{% endblock %}
